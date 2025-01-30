@@ -1,0 +1,27 @@
+﻿@page "/"
+<button @onclick="ActivateHost">Host Game</button>
+<button @onclick="ActivatePlayer">Join Game</button>
+@if (isPlayer)
+{
+    <Player></Player>
+}
+@if (isHost)
+{
+    <Host></Host>
+}
+
+@code {
+    bool isPlayer = false;
+    bool isHost = false;
+
+    void ActivatePlayer()
+    {
+        isHost = false;
+        isPlayer = true;
+    }
+    void ActivateHost()
+    {
+        isHost = true;
+        isPlayer = false;
+    }
+}
