@@ -1,0 +1,102 @@
+﻿namespace HeistBox.Data
+{
+    public static class HeistData
+    {
+        private static Random rand = new Random();
+        public static List<string> heistLocations = new List<string>
+        {
+            // Serious locations
+            "Federal Reserve Bank",
+            "Swiss Bank Vault",
+            "Las Vegas Casino Vault",
+            "Underground Black Market Safehouse",
+            "Royal Jewel Exhibit",
+            "Top-Secret Research Facility",
+            "National Mint",
+            "Billionaire's Private Island Mansion",
+            "Luxury Cruise Ship Safe",
+            "World Trade Market Vault",
+            "Ancient Temple Treasure Chamber",
+            "Military Weapons Depot",
+            "Underground Art Smuggling Ring",
+            "Cyber Security Data Center",
+            "Luxury Jewelry Store",
+            "Giant Tech Corporation Headquarters",
+            "Private Security Firm Headquarters",
+            "Underground Gold Reserve",
+            "Stock Exchange Trading Floor",
+            "Mafia Boss’s Private Vault",
+            "World’s Largest Diamond Exhibition",
+            "Secret Underground Bunker",
+            "Elite Social Club Safe Room",
+            "Mega Church Donation Vault",
+            "Antique Collector’s Mansion",
+            "University Research Grant Vault",
+            "Celebrity's Hidden Safe Room",
+            "Private Airport Security Office",
+            "Crown Jewels Display",
+            "High-Stakes Poker Tournament Vault",
+            "Pharmaceutical Research Lab",
+            "Secret Government Black Site",
+            "Offshore Banking Facility",
+            "Luxury Resort Safe Room",
+            "High-End Art Auction House",
+            "Cargo Ship with Illicit Goods",
+            "Private Wine Cellar Full of Rare Bottles",
+            "Grand Opera House Safe",
+            "Diamond Mining Corporation Headquarters",
+            "Underground Fight Club Betting Room",
+            "National Library Rare Manuscript Wing",
+            "International Arms Dealer Warehouse",
+            "Supermax Prison Confiscation Room",
+            "Film Studio’s Million-Dollar Prop Vault",
+            "Secret Train Car Carrying Gold",
+            "Hidden Monastery Filled with Ancient Scrolls",
+            "Largest Casino on Earth VIP Lounge",
+            "Elite Billionaire’s Charity Gala Fund Vault",
+            "Vatican’s Secret Archives",
+            "Old Bank Abandoned but Still Full of Money",
+            "Airplane Cargo Hold Full of Cash",
+            "Mega Mall’s High-End Jewelry District Vault",
+            "Mysterious Ghost Town with Hidden Gold",
+            "Hacker Syndicate’s Underground Server Room",
+            
+            // Silly locations
+            "Aunt Mildred's Cookie Jar Emporium",
+            "Clown College Cash Room",
+            "Unicorn Stable of Dreams",
+            "Chocolate Factory Vault",
+            "Pirate Cove Treasure Chest",
+            "Ninja Dojo Secret Scrolls Chamber",
+            "Grandma's Bingo Night Prize Vault",
+            "Aliens' Lost Luggage Storage",
+            "The Hamster Kingdom Treasury",
+            "Supervillain's Evil Lair Piggy Bank",
+            "The World’s Largest Vending Machine",
+            "Mall Santa's Candy Cane Reserve",
+            "Underground Gnome Gold Stash",
+            "The Secret Stash of the Tooth Fairy",
+            "Warehouse of Unclaimed Lottery Tickets",
+            "The Ice Cream Truck of Infinite Desserts",
+            "Comic Book Shop's Rare Collector's Edition Vault",
+            "Bigfoot's Hidden Stash of Gold Coins",
+            "The CEO’s Desk Drawer of Uncashed Paychecks",
+            "The World’s Only Remaining Blockbuster Store Safe",
+            "A 24-Hour Waffle House Cash Register",
+            "The Bank of Monopoly Money",
+            "An Arcade Full of Unused Prize Tickets",
+            "Secret Government Warehouse of Lost Socks",
+            "The World’s Largest Ball Pit Filled with Cash",
+            "A Farmer's Market Honey Stand Full of Gold Jars",
+            "Underground Cat Mafia Fish Reserve",
+            "Santa’s Workshop Hidden Gold Reserve",
+            "The Secret Gold Stash of a Retired Pirate",
+            "A High-Security Pillow Fort in a Billionaire's Mansion"
+        };
+
+        public static string GetRandomLocation()
+        {
+            return heistLocations[rand.Next(0, heistLocations.Count)];
+        }
+    }
+}

@@ -1,59 +1,84 @@
 ﻿@using Microsoft.AspNetCore.SignalR.Client
+@using HeistBox.Data
 @inject NavigationManager Navigation
 @implements IAsyncDisposable
 
 <PageTitle>Host</PageTitle>
 
-<div class="form-group">
-    <label>
-        User:
-        <input @bind="userInput" />
-    </label>
-</div>
-<div class="form-group">
-    <label>
-        Message:
-        <input @bind="messageInput" size="50" />
-    </label>
-</div>
-<button @onclick="Send" disabled="@(!IsConnected)">Send</button>
+@if(CurrentGame == null)
+{
+    <h1>Game is loading</h1>
+    <button @onclick="CreateGame">Create</button>
+    <p>RoomId: @roomId</p>
+}
+else
+{
+    <h1>Setup your crew!</h1>
+    <h2>Room code: @CurrentGame.id</h2>
+    <h2>All heisters:</h2>
+    <ul>
+        @foreach (PlayerData u in CurrentGame.players)
+        {
+            <li>@u.Name</li>
+        }
+    </ul>
+    @* Debug *@
+    
 
-<hr>
+    <p>@CurrentGame.heistLocation</p>
+}
 
-<ul id="messagesList">
-    @foreach (var message in messages)
-    {
-        <li>@message</li>
-    }
-</ul>
+
 
 @code {
     private HubConnection? hubConnection;
     private List<string> messages = new List<string>();
     private string? userInput;
-    private string? messageInput;
+    private string roomId;
+    private GameData CurrentGame;
 
     protected override async Task OnInitializedAsync()
     {
+        roomId = GameData.GenerateId();
         hubConnection = new HubConnectionBuilder()
             .WithUrl(Navigation.ToAbsoluteUri("/gamehub"))
             .Build();
 
-        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        hubConnection.On<GameData>("GameCreated", (gameResponse) =>
         {
-            var encodedMsg = $"{user}: {message}";
-            messages.Add(encodedMsg);
-            StateHasChanged();
+            // if (gameResponse.id.ToLower().Trim() == roomId.ToLower().Trim())
+            // {
+                CurrentGame = gameResponse;
+                StateHasChanged();
+            // }
+        });
+
+        hubConnection.On<GameData>("PlayerJoined", (gameResponse) =>
+        {
+            if(gameResponse.id == CurrentGame.id)
+            {
+                CurrentGame = gameResponse;
+                StateHasChanged();
+            }
+        });
+
+        hubConnection.On<GameData>("PlayerLeft", (gameResponse) =>
+        {
+            if (gameResponse.id == CurrentGame.id)
+            {
+                CurrentGame = gameResponse;
+                StateHasChanged();
+            }
         });
 
         await hubConnection.StartAsync();
     }
 
-    private async Task Send()
+    private async Task CreateGame()
     {
         if (hubConnection is not null)
         {
-            await hubConnection.SendAsync("SendMessage", userInput, messageInput);
+            await hubConnection.SendAsync("CreateGame", roomId);
         }
     }
 
