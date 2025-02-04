@@ -16,6 +16,7 @@ namespace HeistBox.Hubs
             
             GameData newGame = new GameData(roomId);
             GameData.AddGame(newGame);
+            Console.WriteLine(newGame);
             await Clients.All.SendAsync("GameCreated", newGame);
         }
 
@@ -24,6 +25,13 @@ namespace HeistBox.Hubs
             GameData result = GameData.GetGameById(roomId);
             result.players.Add(new PlayerData() { Name = user});
             await Clients.All.SendAsync("PlayerJoined", result);
+        }
+
+        public async Task StartGame(string roomId)
+        { 
+            GameData newGame = GameData.GetGameById(roomId);
+            newGame.started = true;
+            await Clients.All.SendAsync("GameStarted", newGame);
         }
     }
 }

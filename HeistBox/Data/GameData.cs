@@ -1,17 +1,25 @@
-﻿namespace HeistBox.Data
+﻿using System.Text.Json.Serialization;
+
+namespace HeistBox.Data
 {
+    [Serializable]
     public class GameData
     {
-        public string id;
-        public List<PlayerData> players;
-        public string heistLocation;
+        [JsonPropertyName("id")]
+        public string id { get; set; }
+        [JsonPropertyName("players")]
+        public List<PlayerData> players { get; set; } = new List<PlayerData>();
+        [JsonPropertyName("heistLocation")]
+        public string heistLocation { get; set; } = HeistData.GetRandomLocation();
+        [JsonPropertyName("started")]
+        public bool started { get; set; } = false;
         public static List<GameData> activeGames = new List<GameData>();
+
+        public GameData() { } // Default constructor needed for serialization
 
         public GameData(string roomid)
         {
             id = roomid;
-            players = new List<PlayerData>();
-            heistLocation = HeistData.GetRandomLocation();
         }
 
         public static void RemoveGame(GameData game)

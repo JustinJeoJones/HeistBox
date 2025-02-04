@@ -4,7 +4,7 @@
 @implements IAsyncDisposable
 
 <PageTitle>Player</PageTitle>
-@if(joined == false)
+@if(joined == false && started == false)
 {
     <div class="form-group">
         <label>
@@ -20,9 +20,17 @@
     </div>
     <button @onclick="Join" disabled="@(!IsConnected)">Join</button>
 }
-else
+else if (joined == true && started == false)
 {
     <p>Wait for host to start the heist</p>
+}
+else if (joined == true && started == true)
+{
+    <h1>Heisting: @location</h1>
+}
+else
+{
+    <h1>Heisting: @location</h1>
 }
 
 
@@ -34,6 +42,8 @@ else
     private string? userInput;
     private string? gameId;
     private bool joined = false;
+    private bool started = false;
+    private string location = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -41,11 +51,21 @@ else
             .WithUrl(Navigation.ToAbsoluteUri("/gamehub"))
             .Build();
 
-        hubConnection.On<GameData>("PlayerJoined", (game) =>
+        hubConnection.On<GameData>("PlayerJoined", (gameResponse) =>
         {
-            if (game.id == gameId.ToLower().Trim() && game.players.Any(p => p.Name == userInput))
+            if (gameResponse.id.ToLower().Trim() == gameId.ToLower().Trim() && gameResponse.players.Any(p => p.Name == userInput))
             {
                 joined = true;
+                StateHasChanged();
+            }
+        });
+
+        hubConnection.On<GameData>("GameStarted", (gameResponse) =>
+        {
+            if (gameResponse.id.ToLower().Trim() == gameId.ToLower().Trim())
+            {
+                started = true;
+                location = gameResponse.heistLocation;
                 StateHasChanged();
             }
         });
