@@ -27,6 +27,8 @@ else if (joined == true && started == false)
 else if (joined == true && started == true)
 {
     <h1>Heisting: @location</h1>
+    <h1></h1>
+    <input @bind="answer.answer" />
 }
 else
 {
@@ -41,9 +43,11 @@ else
     private List<string> messages = new List<string>();
     private string? userInput;
     private string? gameId;
+    private PlayerData? user;
     private bool joined = false;
     private bool started = false;
     private string location = "";
+    private Response answer = new Response();
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,6 +60,7 @@ else
             if (gameResponse.id.ToLower().Trim() == gameId.ToLower().Trim() && gameResponse.players.Any(p => p.Name == userInput))
             {
                 joined = true;
+                user = gameResponse.players.FirstOrDefault(p => p.Name == userInput);
                 StateHasChanged();
             }
         });

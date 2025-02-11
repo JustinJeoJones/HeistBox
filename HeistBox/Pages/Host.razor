@@ -4,15 +4,17 @@
 @implements IAsyncDisposable
 
 <PageTitle>Host</PageTitle>
-<CountdownTimer></CountdownTimer>
 
-@if(CurrentGame == null)
+
+@if (GameState() == 0)
 {
+    //Starting page
     <h1>Game is loading</h1>
     <button @onclick="CreateGame">Create</button>
 }
-else if (CurrentGame != null && started == false)
+else if (GameState() == 1)
 {
+    //Player joining
     <h1>Setup your crew!</h1>
     <h2>Room code: @CurrentGame.id</h2>
     <button @onclick="StartGame">Start game</button>
@@ -24,8 +26,9 @@ else if (CurrentGame != null && started == false)
         }
     </ul>
 }
-else if (CurrentGame != null && started == true)
+else if (GameState() == 2)
 {
+    //Answer Submission
     //Get voice playing once setup
     <h1>Attention Heisters</h1>
     <h2>Today you've been hired to rob...</h2>
@@ -33,6 +36,11 @@ else if (CurrentGame != null && started == true)
     <h2>One problem...</h2>
     <h2>You are independent contracts with no contact with each other.</h2>
     <h2>Please bring your best ideas. Submit them on your devices.</h2>
+    <CountdownTimer OnTimerEnded="EndAnswerSubmission"></CountdownTimer>
+}
+else if (GameState() == 3)
+{
+    //Voting
 }
 
 
@@ -44,6 +52,26 @@ else if (CurrentGame != null && started == true)
     private string? roomId;
     private GameData? CurrentGame;
     private bool started = false;
+    private bool submissionFinished = false;
+
+    private int GameState()
+    {
+        int result = 0;
+        if (CurrentGame != null)
+        {
+            result++;
+        }
+        if (started)
+        {
+            result++;
+        }
+        if (submissionFinished)
+        {
+            result++;
+        }
+
+        return result;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -79,6 +107,16 @@ else if (CurrentGame != null && started == true)
             }
         });
 
+        hubConnection.On<GameData>("StartVoting", (gameResponse) =>
+        {
+            if (gameResponse.id == CurrentGame.id)
+            {
+                CurrentGame = gameResponse;
+                submissionFinished = true;
+                StateHasChanged();
+            }
+        });
+
         await hubConnection.StartAsync();
     }
 
@@ -96,6 +134,14 @@ else if (CurrentGame != null && started == true)
         {
             started = true;
             await hubConnection.SendAsync("StartGame", roomId);
+        }
+    }
+
+    private async Task EndAnswerSubmission()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.SendAsync("EndAnswerSubmission", roomId);
         }
     }
 

@@ -13,6 +13,8 @@ namespace HeistBox.Data
         public string heistLocation { get; set; } = HeistData.GetRandomLocation();
         [JsonPropertyName("started")]
         public bool started { get; set; } = false;
+
+
         public static List<GameData> activeGames = new List<GameData>();
 
         public GameData() { } // Default constructor needed for serialization

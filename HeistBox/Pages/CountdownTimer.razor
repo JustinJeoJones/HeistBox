@@ -7,10 +7,11 @@
 @code {
     private TimeSpan timeRemaining;
     private Timer timer;
+    [Parameter] public EventCallback OnTimerEnded { get; set; } // Output parameter
 
     protected override void OnInitialized()
     {
-        timeRemaining = TimeSpan.FromMinutes(1.5); // Set initial time (e.g., 5 minutes)
+        timeRemaining = TimeSpan.FromMinutes(0.1); // Set initial time (e.g., 5 minutes)
         timer = new Timer(1000); // Timer ticks every second
         timer.Elapsed += TimerElapsed;
         timer.Start();
@@ -18,21 +19,24 @@
 
     private void TimerElapsed(object sender, ElapsedEventArgs e)
     {
-        if (timeRemaining.TotalSeconds > 0)
+        InvokeAsync(async () =>
         {
-            timeRemaining = timeRemaining.Subtract(TimeSpan.FromSeconds(1));
-            InvokeAsync(StateHasChanged); // Update UI
-        }
-        else
-        {
-            timer.Stop();
-            // Optionally, perform some action when the countdown reaches zero
-        }
+            if (timeRemaining.TotalSeconds > 0)
+            {
+                timeRemaining = timeRemaining.Subtract(TimeSpan.FromSeconds(1));
+                StateHasChanged(); // Safe because it's inside InvokeAsync
+            }
+            else
+            {
+                timer.Stop();
+                await OnTimerEnded.InvokeAsync(); // Safe execution of the event callback
+            }
+        });
     }
 
     public void Dispose()
     {
-        timer.Dispose();
+        timer?.Dispose();
     }
 }
 

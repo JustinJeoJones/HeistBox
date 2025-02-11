@@ -33,5 +33,12 @@ namespace HeistBox.Hubs
             newGame.started = true;
             await Clients.All.SendAsync("GameStarted", newGame);
         }
+
+        public async Task EndAnswerSubmission(string roomId)
+        {
+            GameData newGame = GameData.GetGameById(roomId);
+            newGame.started = true;
+            await Clients.All.SendAsync("GameStarted", newGame);
+        }
     }
 }
