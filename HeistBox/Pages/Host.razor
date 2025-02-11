@@ -4,13 +4,14 @@
 @implements IAsyncDisposable
 
 <PageTitle>Host</PageTitle>
+<CountdownTimer></CountdownTimer>
 
 @if(CurrentGame == null)
 {
     <h1>Game is loading</h1>
     <button @onclick="CreateGame">Create</button>
 }
-else
+else if (CurrentGame != null && started == false)
 {
     <h1>Setup your crew!</h1>
     <h2>Room code: @CurrentGame.id</h2>
@@ -23,6 +24,16 @@ else
         }
     </ul>
 }
+else if (CurrentGame != null && started == true)
+{
+    //Get voice playing once setup
+    <h1>Attention Heisters</h1>
+    <h2>Today you've been hired to rob...</h2>
+    <h1>@CurrentGame.heistLocation</h1>
+    <h2>One problem...</h2>
+    <h2>You are independent contracts with no contact with each other.</h2>
+    <h2>Please bring your best ideas. Submit them on your devices.</h2>
+}
 
 
 
@@ -32,6 +43,7 @@ else
     //private string? userInput;
     private string? roomId;
     private GameData? CurrentGame;
+    private bool started = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -82,6 +94,7 @@ else
     {
         if (hubConnection is not null)
         {
+            started = true;
             await hubConnection.SendAsync("StartGame", roomId);
         }
     }

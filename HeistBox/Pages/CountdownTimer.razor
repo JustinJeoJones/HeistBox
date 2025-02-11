@@ -1,0 +1,38 @@
+﻿@using System.Timers
+
+<h3>Countdown Timer</h3>
+
+<p>Time remaining: @timeRemaining.ToString(@"mm\:ss")</p>
+
+@code {
+    private TimeSpan timeRemaining;
+    private Timer timer;
+
+    protected override void OnInitialized()
+    {
+        timeRemaining = TimeSpan.FromMinutes(1.5); // Set initial time (e.g., 5 minutes)
+        timer = new Timer(1000); // Timer ticks every second
+        timer.Elapsed += TimerElapsed;
+        timer.Start();
+    }
+
+    private void TimerElapsed(object sender, ElapsedEventArgs e)
+    {
+        if (timeRemaining.TotalSeconds > 0)
+        {
+            timeRemaining = timeRemaining.Subtract(TimeSpan.FromSeconds(1));
+            InvokeAsync(StateHasChanged); // Update UI
+        }
+        else
+        {
+            timer.Stop();
+            // Optionally, perform some action when the countdown reaches zero
+        }
+    }
+
+    public void Dispose()
+    {
+        timer.Dispose();
+    }
+}
+
