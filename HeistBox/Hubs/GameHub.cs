@@ -30,15 +30,15 @@ namespace HeistBox.Hubs
         public async Task StartGame(string roomId)
         { 
             GameData newGame = GameData.GetGameById(roomId);
-            newGame.started = true;
+            newGame.gameState = GameState.AnswerSubmission;
             await Clients.All.SendAsync("GameStarted", newGame);
         }
 
         public async Task EndAnswerSubmission(string roomId)
         {
             GameData newGame = GameData.GetGameById(roomId);
-            newGame.started = true;
-            await Clients.All.SendAsync("GameStarted", newGame);
+            newGame.gameState = GameState.Voting;
+            await Clients.All.SendAsync("StartVoting", newGame);
         }
     }
 }

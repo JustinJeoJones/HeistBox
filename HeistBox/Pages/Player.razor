@@ -4,7 +4,7 @@
 @implements IAsyncDisposable
 
 <PageTitle>Player</PageTitle>
-@if(joined == false && started == false)
+@if (gameState == null)
 {
     <div class="form-group">
         <label>
@@ -20,11 +20,11 @@
     </div>
     <button @onclick="Join" disabled="@(!IsConnected)">Join</button>
 }
-else if (joined == true && started == false)
+else if (gameState == GameState.PlayerJoin)
 {
     <p>Wait for host to start the heist</p>
 }
-else if (joined == true && started == true)
+else if (gameState == GameState.AnswerSubmission)
 {
     <h1>Heisting: @location</h1>
     <h1></h1>
@@ -48,6 +48,7 @@ else
     private bool started = false;
     private string location = "";
     private Response answer = new Response();
+    private GameState? gameState = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,7 +60,7 @@ else
         {
             if (gameResponse.id.ToLower().Trim() == gameId.ToLower().Trim() && gameResponse.players.Any(p => p.Name == userInput))
             {
-                joined = true;
+                gameState = GameState.PlayerJoin;
                 user = gameResponse.players.FirstOrDefault(p => p.Name == userInput);
                 StateHasChanged();
             }
@@ -69,7 +70,7 @@ else
         {
             if (gameResponse.id.ToLower().Trim() == gameId.ToLower().Trim())
             {
-                started = true;
+                gameState = GameState.AnswerSubmission;
                 location = gameResponse.heistLocation;
                 StateHasChanged();
             }

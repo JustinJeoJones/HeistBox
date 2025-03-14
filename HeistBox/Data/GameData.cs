@@ -11,8 +11,8 @@ namespace HeistBox.Data
         public List<PlayerData> players { get; set; } = new List<PlayerData>();
         [JsonPropertyName("heistLocation")]
         public string heistLocation { get; set; } = HeistData.GetRandomLocation();
-        [JsonPropertyName("started")]
-        public bool started { get; set; } = false;
+        [JsonPropertyName("gameState")]
+        public GameState gameState { get; set; } = GameState.Lobby;
 
 
         public static List<GameData> activeGames = new List<GameData>();

@@ -6,13 +6,13 @@
 <PageTitle>Host</PageTitle>
 
 
-@if (GameState() == 0)
+@if (CurrentGame == null)
 {
     //Starting page
     <h1>Game is loading</h1>
     <button @onclick="CreateGame">Create</button>
 }
-else if (GameState() == 1)
+else if (CurrentGame.gameState == GameState.Lobby)
 {
     //Player joining
     <h1>Setup your crew!</h1>
@@ -26,7 +26,7 @@ else if (GameState() == 1)
         }
     </ul>
 }
-else if (GameState() == 2)
+else if (CurrentGame.gameState == GameState.AnswerSubmission)
 {
     //Answer Submission
     //Get voice playing once setup
@@ -38,9 +38,10 @@ else if (GameState() == 2)
     <h2>Please bring your best ideas. Submit them on your devices.</h2>
     <CountdownTimer OnTimerEnded="EndAnswerSubmission"></CountdownTimer>
 }
-else if (GameState() == 3)
+else if (CurrentGame.gameState == GameState.Voting)
 {
     //Voting
+    <h1>Voting</h1>
 }
 
 
@@ -53,25 +54,6 @@ else if (GameState() == 3)
     private GameData? CurrentGame;
     private bool started = false;
     private bool submissionFinished = false;
-
-    private int GameState()
-    {
-        int result = 0;
-        if (CurrentGame != null)
-        {
-            result++;
-        }
-        if (started)
-        {
-            result++;
-        }
-        if (submissionFinished)
-        {
-            result++;
-        }
-
-        return result;
-    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -99,6 +81,15 @@ else if (GameState() == 3)
         });
 
         hubConnection.On<GameData>("PlayerLeft", (gameResponse) =>
+        {
+            if (gameResponse.id == CurrentGame.id)
+            {
+                CurrentGame = gameResponse;
+                StateHasChanged();
+            }
+        });
+
+        hubConnection.On<GameData>("GameStarted", (gameResponse) =>
         {
             if (gameResponse.id == CurrentGame.id)
             {
