@@ -30,6 +30,7 @@ else if (gameState == GameState.AnswerSubmission)
     <h1>Your assigned role: @answer.role.Name</h1>
     <p>@answer.role.Description</p>
     <input @bind="answer.answer" />
+    <button @onclick="SendAnswer" disabled="@(!IsConnected)">Submit Answer</button>
 }
 else
 {
@@ -86,6 +87,14 @@ else
         if (hubConnection is not null)
         {
             await hubConnection.SendAsync("JoinGame", userInput, gameId);
+        }
+    }
+
+    private async Task SendAnswer()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.SendAsync("SendAnswer", gameId, answer);
         }
     }
 

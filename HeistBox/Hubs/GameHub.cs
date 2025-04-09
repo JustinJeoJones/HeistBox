@@ -34,6 +34,13 @@ namespace HeistBox.Hubs
             newGame.responses = GameData.SetupPlayerRoles(newGame.players);
             await Clients.All.SendAsync("GameStarted", newGame);
         }
+        public async Task SendAnswer(string roomId, Response submittedResponse)
+        {
+            GameData newGame = GameData.GetGameById(roomId);
+            newGame.responses.FirstOrDefault(r => r.player.Name == submittedResponse.player.Name).answer = submittedResponse.answer;
+
+            await Clients.All.SendAsync("GotAnswer", newGame);
+        }
 
         public async Task EndAnswerSubmission(string roomId)
         {

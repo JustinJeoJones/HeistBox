@@ -37,6 +37,12 @@ else if (CurrentGame.gameState == GameState.AnswerSubmission)
     <h2>You are independent contracts with no contact with each other.</h2>
     <h2>Please bring your best ideas. Submit them on your devices.</h2>
     <CountdownTimer OnTimerEnded="EndAnswerSubmission"></CountdownTimer>
+
+    //Debug
+    @foreach(Response response in CurrentGame.responses)
+    {
+        <p>@response.player.Name : @response.answer</p>
+    }
 }
 else if (CurrentGame.gameState == GameState.Voting)
 {
@@ -98,6 +104,15 @@ else if (CurrentGame.gameState == GameState.Voting)
             }
         });
 
+        hubConnection.On<GameData>("GotAnswer", (gameResponse) =>
+        {
+            if (gameResponse.id == CurrentGame.id)
+            {
+                CurrentGame = gameResponse;
+                StateHasChanged();
+            }
+        });
+
         hubConnection.On<GameData>("StartVoting", (gameResponse) =>
         {
             if (gameResponse.id == CurrentGame.id)
@@ -107,6 +122,8 @@ else if (CurrentGame.gameState == GameState.Voting)
                 StateHasChanged();
             }
         });
+
+
 
         await hubConnection.StartAsync();
     }
