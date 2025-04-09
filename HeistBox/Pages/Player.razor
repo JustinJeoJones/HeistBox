@@ -27,7 +27,8 @@ else if (gameState == GameState.PlayerJoin)
 else if (gameState == GameState.AnswerSubmission)
 {
     <h1>Heisting: @location</h1>
-    <h1></h1>
+    <h1>Your assigned role: @answer.role.Name</h1>
+    <p>@answer.role.Description</p>
     <input @bind="answer.answer" />
 }
 else
@@ -72,6 +73,7 @@ else
             {
                 gameState = GameState.AnswerSubmission;
                 location = gameResponse.heistLocation;
+                answer = gameResponse.responses.FirstOrDefault(x => x.player.Name == user.Name);
                 StateHasChanged();
             }
         });

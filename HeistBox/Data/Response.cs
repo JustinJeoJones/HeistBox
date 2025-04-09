@@ -4,6 +4,7 @@
     {
         public string answer {  get; set; }
         public PlayerData player { get; set; }
+        public Role role { get; set; }
         public bool wasChosen { get; set; } = false;
     }
 }

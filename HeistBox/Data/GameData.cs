@@ -13,6 +13,8 @@ namespace HeistBox.Data
         public string heistLocation { get; set; } = HeistData.GetRandomLocation();
         [JsonPropertyName("gameState")]
         public GameState gameState { get; set; } = GameState.Lobby;
+        [JsonPropertyName("responses")]
+        public List<Response> responses { get; set; } = new List<Response>();
 
 
         public static List<GameData> activeGames = new List<GameData>();
@@ -55,6 +57,40 @@ namespace HeistBox.Data
         public static GameData GetGameById(string id)
         {
             return activeGames.FirstOrDefault(g => g.id.ToLower().Trim() == id.ToLower().Trim());
+        }
+
+        public static List<Response> SetupPlayerRoles(List<PlayerData> users)
+        {
+            var result = new List<Response>();
+            var random = new Random();
+
+            // Shuffle the user list
+            var shuffledUsers = users.OrderBy(u => random.Next()).ToList();
+
+            int i = 0;
+            while (i < shuffledUsers.Count)
+            {
+                int remaining = shuffledUsers.Count - i;
+                int groupSize = (remaining == 3) ? 3 : Math.Min(2, remaining);
+
+                // Assign a random role to the group
+                Role role = Role.GetRandomRole();
+
+                for (int j = 0; j < groupSize; j++)
+                {
+                    result.Add(new Response
+                    {
+                        answer = string.Empty,
+                        player = shuffledUsers[i + j],
+                        role = role,
+                        wasChosen = false
+                    });
+                }
+
+                i += groupSize;
+            }
+
+            return result;
         }
     }
 }

@@ -31,6 +31,7 @@ namespace HeistBox.Hubs
         { 
             GameData newGame = GameData.GetGameById(roomId);
             newGame.gameState = GameState.AnswerSubmission;
+            newGame.responses = GameData.SetupPlayerRoles(newGame.players);
             await Clients.All.SendAsync("GameStarted", newGame);
         }
 

@@ -12,7 +12,7 @@
     protected override void OnInitialized()
     {
         timeRemaining = TimeSpan.FromMinutes(0.1); // Set initial time (e.g., 5 minutes)
-        timer = new Timer(1000); // Timer ticks every second
+        timer = new Timer(2000); // Timer ticks every second
         timer.Elapsed += TimerElapsed;
         timer.Start();
     }
