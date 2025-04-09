@@ -39,15 +39,21 @@ else if (CurrentGame.gameState == GameState.AnswerSubmission)
     <CountdownTimer OnTimerEnded="EndAnswerSubmission"></CountdownTimer>
 
     //Debug
-    @foreach(Response response in CurrentGame.responses)
+    @* @foreach(Response response in CurrentGame.responses)
     {
         <p>@response.player.Name : @response.answer</p>
-    }
+    } *@
 }
 else if (CurrentGame.gameState == GameState.Voting)
 {
     //Voting
     <h1>Voting</h1>
+    <h1>@GetKeyValuePair().Key</h1>
+    foreach(Response response in GetKeyValuePair().Value)
+    {
+        <p>@response.answer</p>
+    }
+    <button @onclick="UpdateIndex">Debug Next Answer Button</button>
 }
 
 
@@ -60,6 +66,8 @@ else if (CurrentGame.gameState == GameState.Voting)
     private GameData? CurrentGame;
     private bool started = false;
     private bool submissionFinished = false;
+    private int currentRoleVoteIndex = 0;
+    private Dictionary<string, List<Response>> allResponsesDictionary = new Dictionary<string, List<Response>>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -119,6 +127,7 @@ else if (CurrentGame.gameState == GameState.Voting)
             {
                 CurrentGame = gameResponse;
                 submissionFinished = true;
+                allResponsesDictionary = GameData.GroupResponsesByRoleName(CurrentGame.responses);
                 StateHasChanged();
             }
         });
@@ -126,6 +135,16 @@ else if (CurrentGame.gameState == GameState.Voting)
 
 
         await hubConnection.StartAsync();
+    }
+
+    private KeyValuePair<string, List<Response>> GetKeyValuePair()
+    {
+        return allResponsesDictionary.ToList()[currentRoleVoteIndex];
+    }
+
+    private void UpdateIndex()
+    {
+        currentRoleVoteIndex++;
     }
 
     private async Task CreateGame()
@@ -163,4 +182,5 @@ else if (CurrentGame.gameState == GameState.Voting)
             await hubConnection.DisposeAsync();
         }
     }
+
 }

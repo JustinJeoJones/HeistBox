@@ -92,5 +92,12 @@ namespace HeistBox.Data
 
             return result;
         }
+
+        public static Dictionary<string, List<Response>> GroupResponsesByRoleName(List<Response> responses)
+        {
+            return responses
+                .GroupBy(r => r.role.Name)
+                .ToDictionary(g => g.Key, g => g.ToList());
+        }
     }
 }
